@@ -23,12 +23,8 @@ NAME		= philo
 # LDFLAGS     linker flags
 # LDLIBS      libraries name
 
-LIBS	:= ft
-LIBS_TARGET :=            \
-	lib/libft/libft.a \
 
 INCS        := include    \
-	lib/libft/include   \
 
 SRC_DIR     := src
 SRCS        :=main.c \
@@ -36,7 +32,6 @@ SRCS        :=main.c \
 				process.c \
 				utils.c \
 				threads.c \
-
 
 SRCS        := $(SRCS:%=$(SRC_DIR)/%)
 BUILD_DIR   := .build
@@ -48,9 +43,6 @@ DEPS        := $(OBJS:.o=.d)
 CC          := clang
 CFLAGS      := -Wall -Wextra -Werror -g -pthread
 CPPFLAGS    := $(addprefix -I,$(INCS)) -MMD -MP
-LDFLAGS     := $(addprefix -L,$(dir $(LIBS_TARGET)))
-LDLIBS      := $(addprefix -l,$(LIBS))
-
 
 #------------------------------------------------#
 #   UTENSILS                                     #
@@ -78,12 +70,9 @@ DIR_DUP     = mkdir -p $(@D)
 
 all: $(NAME)
 
-$(NAME): $(OBJS) $(LIBS_TARGET)
-	$(CC) $(LDFLAGS) $(OBJS) $(LDLIBS) -o $(NAME)
+$(NAME): $(OBJS)
+	$(CC) $(LDFLAGS) $(OBJS) -o $(NAME)
 	$(info CREATED $(NAME))
-
-$(LIBS_TARGET):
-	$(MAKE) -C $(@D)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	$(DIR_DUP)
@@ -92,13 +81,10 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 
 -include $(DEPS)
 
-
 clean:
-	for f in $(dir $(LIBS_TARGET)); do $(MAKE) -C $$f clean; done
 	$(RM) $(OBJS) $(DEPS)
 
 fclean: clean
-	for f in $(dir $(LIBS_TARGET)); do $(MAKE) -C $$f fclean; done
 	$(RM) $(NAME)
 
 re:

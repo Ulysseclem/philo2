@@ -1,6 +1,3 @@
-.build/threads.o: src/threads.c include/philosopher.h \
-  lib/libft/include/libft.h
+.build/threads.o: src/threads.c include/philosopher.h
 
 include/philosopher.h:
-
-lib/libft/include/libft.h:

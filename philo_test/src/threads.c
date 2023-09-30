@@ -6,36 +6,20 @@
 /*   By: uclement <uclement@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 21:56:20 by ulysseclem        #+#    #+#             */
-/*   Updated: 2023/09/30 16:03:52 by uclement         ###   ########.fr       */
+/*   Updated: 2023/09/30 17:55:25 by uclement         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosopher.h"
 
-int is_philo_dead(t_philo *philo)
+int	is_philo_dead(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->data->dead_lock);
 	if (philo->data->dead_flag != 0)
-	{
-		pthread_mutex_unlock(&philo->data->dead_lock);
-		return (1);
-	}
+		return (pthread_mutex_unlock(&philo->data->dead_lock), 1);
 	pthread_mutex_unlock(&philo->data->dead_lock);
 	return (0);
 }
-
-void	print_txt(t_philo *philo, char *str)
-{
-	pthread_mutex_lock(&philo->data->dead_lock);
-	if (philo->data->dead_flag == 0)
-	{
-		pthread_mutex_lock(&philo->data->print);
-		printf("%ld %d %s\n", get_current_time() - philo->start, philo->id, str);
-		pthread_mutex_unlock(&philo->data->print);
-	}
-	pthread_mutex_unlock(&philo->data->dead_lock);
-}
-
 
 int	eat_count(t_philo *philo)
 {
@@ -45,7 +29,6 @@ int	eat_count(t_philo *philo)
 		return (0);
 	return (1);
 }
-
 
 void	*routine(void *philo_ptr)
 {
@@ -65,12 +48,9 @@ void	threads_maker(t_philo *philo)
 {
 	int	i;
 	
-	i = 0;
-	while (i < philo->count)
-	{
+	i = -1;
+	while (++i < philo->count)
 		pthread_create(&philo[i].thread, NULL, &routine, &philo[i]);
-		i++;
-	}
 	i = -1;
 	while (++i < philo->count)
 		pthread_join(philo[i].thread, NULL);

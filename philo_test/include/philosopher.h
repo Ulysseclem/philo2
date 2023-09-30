@@ -6,7 +6,7 @@
 /*   By: uclement <uclement@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 15:28:29 by uclement          #+#    #+#             */
-/*   Updated: 2023/09/30 16:25:26 by uclement         ###   ########.fr       */
+/*   Updated: 2023/09/30 18:26:53 by uclement         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <inttypes.h>
-# include "libft.h"
 # include <pthread.h>
 # include <stdio.h>
 # include <sys/time.h>
@@ -36,9 +35,7 @@ typedef struct s_philo {
 	int				count;
 	int				count_meal;
 	int				must_eat;
-	int				dead;
 	u_int64_t		lastmeal;
-	u_int64_t		will_die;
 	u_int64_t		start;
 	pthread_t		thread;
 	pthread_mutex_t	*r_fork;
@@ -46,17 +43,16 @@ typedef struct s_philo {
 	t_data			*data;
 }	t_philo;
 
-
-
 //init
 void	init_all(t_data *data, t_philo *philo, pthread_mutex_t *forks, char **av);
-void	init_forks(pthread_mutex_t *forks, int nb_philo);
-void	init_philo(t_philo *philo, pthread_mutex_t *forks, char **av, t_data *data);
-void	init_data(t_data *data, int count);
+void	init_forks(pthread_mutex_t *forks, t_philo *philo);
+void	init_philo(t_philo *philo, char **av, t_data *data);
+void	init_data(t_data *data);
 
 //utils
 size_t	get_current_time(void);
-int	ft_usleep(size_t milliseconds);
+int	ft_usleep(size_t milliseconds, t_philo *philo);
+int	ft_atoi(const char *nptr);
 
 //process
 void	eat(t_philo *philo);
@@ -64,6 +60,7 @@ void	philo_sleep(t_philo *philo);
 void	*routine(void *philo_ptr);
 void	print_txt(t_philo *philo, char *str);
 void	philo_think(t_philo *philo);
+void	print_died(t_philo *philo);
 
 //threads
 void	threads_maker(t_philo *philo);

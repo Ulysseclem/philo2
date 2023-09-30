@@ -6,7 +6,7 @@
 /*   By: uclement <uclement@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 21:04:05 by ulysseclem        #+#    #+#             */
-/*   Updated: 2023/09/30 15:46:05 by uclement         ###   ########.fr       */
+/*   Updated: 2023/09/30 18:21:04 by uclement         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,13 @@ void	threads_breaker(t_philo *philo, pthread_mutex_t *forks, t_data *data)
 	pthread_mutex_destroy(&data->print);
 }
 
+void	free_all(t_philo *philo, pthread_mutex_t *forks, t_data *data)
+{
+	free(forks);
+	free(philo);
+	free(data);	
+}
+
 int	main(int ac, char **av)
 {
 	t_data			*data;
@@ -59,13 +66,47 @@ int	main(int ac, char **av)
 	}
 	count = ft_atoi(av[1]);
 	data = malloc(sizeof(t_data));
+	if (!data)
+		return (1);
 	philo = malloc(sizeof(t_philo) * count);
+	if (!philo)
+		return (free(data), 1);
 	forks = malloc(sizeof(pthread_mutex_t) * count);
+	if (!forks)
+		return(free(data), free(philo), 1);
 	init_all(data, philo, forks, av);
 	threads_maker(philo);
 	threads_breaker(philo, forks, data);
-	free(forks);
-	free(philo);
-	free(data);
+	free_all(philo, forks, data);
 	return (0);
 }
+
+
+/*
+
+[+] Test #27 Succeeded with 200 410 200 200 
+
+		[============[ Testing Invalid Arguments ]==============]
+
+[~] Test #33 Program output multiple lines with 5 2147483649 200 200 5, you should decide if this case is handled well. Here are the last 2 lines:
+ 2602 3 is thinking
+2801 1 is thinking 
+
+[~] Test #34 Program output multiple lines with 5 200 2147483649 200 5, you should decide if this case is handled well. Here are the last 2 lines:
+ 0 4 is eating
+200 1 died 
+
+./test.sh: line 291: 241427 Segmentation fault      timeout 10 "$program_path/$program_name" "${params[@]}" &> output.txt
+[~] Test #35 Program output with 2147483649 200 200 200 5:
+ timeout: the monitored command dumped core 
+[+] Test #36 Program ran successfully without errors or output with 5 200 200 200 2147483649
+
+[~] Test #37 Program output multiple lines with 5 200 200 2147483649 5, you should decide if this case is handled well. Here are the last 2 lines:
+ 0 3 is eating
+200 1 died 
+
+
+		[============[ Error on Threads Creation ]==============]
+
+[+] Test #38 Threads are protected during initialization agaisn't insufficient memory, no errors found 
+*/
